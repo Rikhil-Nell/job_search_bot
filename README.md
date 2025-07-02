@@ -133,8 +133,8 @@ This runs the agent logic directly (no API), useful for debugging and developmen
 
 ## License
 
-MIT (add your license here)
+This project is licensed under the **GNU General Public License v3.0** - see the [LICENSE](LICENSE) file for details.
 
 ## Authors
 
-- [Your Name Here]
+- [Rikhil Nellimarla](www.linkedin.com/in/rikhil-nellimarla)
