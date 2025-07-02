@@ -1,0 +1,44 @@
+name: build and deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: remiscus/job-search-bot:latest
+      
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: 22
+          script: |
+            echo "Connection successful!"
+            sudo docker pull remiscus/job-search-bot:latest
+            sudo docker stop job-search-bot || true
+            sudo docker rm job-search-bot || true
+            sudo docker run -d --name job-search-bot -p 8000:8000 \
+              -e GROQ_API_KEY="${{ secrets.GROQ_API_KEY }}" \
+              -e OPENAI_API_KEY="${{ secrets.OPENAI_API_KEY }}" \
+              -e DB_URL="${{ secrets.DB_URL }}" \
+              -e LOGFIRE_WRITE_TOKEN="${{ secrets.LOGFIRE_WRITE_TOKEN }}" \
+              remiscus/job-search-bot:latest
