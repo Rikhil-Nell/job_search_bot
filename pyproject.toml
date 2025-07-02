@@ -1,0 +1,18 @@
+[project]
+name = "job-search-bot"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "asyncpg>=0.30.0",
+    "fastapi>=0.115.14",
+    "logfire[fastapi]>=3.21.2",
+    "pydantic-ai>=0.3.4",
+    "pydantic-settings>=2.10.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
