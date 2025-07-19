@@ -14,3 +14,5 @@ wheels/
 .vscode
 
 job-search-bot-key.pem
+
+node_modules

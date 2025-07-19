@@ -1,4 +1,4 @@
-from pydantic_ai import Agent, RunContext
+from pydantic_ai import Agent, RunContext, Tool
 from pydantic_ai.messages import ModelMessage
 from pydantic_ai.providers.groq import GroqProvider
 from pydantic_ai.models.groq import GroqModel, GroqModelName, GroqModelSettings
@@ -7,7 +7,7 @@ from pydantic_ai.models.openai import OpenAIModel, OpenAIModelName, OpenAIModelS
 from pydantic import BaseModel
 from src.tools import get_jobs
 from src.db import UserProfile
-from src.settings import settings
+from src.core.config import settings
 from asyncpg.pool import Pool
 import json
 import logging
@@ -36,7 +36,7 @@ agent = Agent(
     model=model,
     instructions=prompt,
     deps_type=AgentDeps,
-    tools=[get_jobs],
+    tools=[Tool(get_jobs, takes_ctx=True, max_retries=1)],
     instrument=True
 )
 

@@ -64,4 +64,4 @@ EXPOSE 8000
 
 # Start the FastAPI server
 # uvicorn will be found because its path is in ENV PATH
-CMD ["uvicorn", "src.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]

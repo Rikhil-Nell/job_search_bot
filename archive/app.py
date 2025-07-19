@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from src.db import db_manager, get_user_profile, get_db_pool
 from src.agent import run_chat
-from src.settings import settings
+from src.core.config import settings
 import logging
 from contextlib import asynccontextmanager
 import asyncpg
