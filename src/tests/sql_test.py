@@ -1,13 +1,11 @@
+# Debugging block to test the SQL script directly
 import asyncpg
-from typing import Optional
-import logging
-from src.schemas.user import UserProfile
+import asyncio
+import os
 
-logger = logging.getLogger("uvicorn.error")
-
-async def get_user_profile(user_id: str, pool: asyncpg.pool.Pool) -> Optional[UserProfile]:
+async def test_sql(user_id: str, dsn: str):
+    pool = await asyncpg.create_pool(dsn=dsn)
     async with pool.acquire() as conn:
-        # This query is updated to join job_role and aggregate skills
         query = """
             SELECT
                 COALESCE(up."firstName", '') as first_name,
@@ -27,15 +25,12 @@ async def get_user_profile(user_id: str, pool: asyncpg.pool.Pool) -> Optional[Us
             GROUP BY up.id, jr.name, c.name, co.name
             LIMIT 1
         """
+        row = await conn.fetchrow(query, user_id)
+        print(dict(row) if row else None)
+    await pool.close()
 
-        try:
-            row = await conn.fetchrow(query, user_id)
-            if row:
-                profile_data = dict(row)
-                # Ensure 'skills' is an empty list if the user has no skills, instead of None
-                profile_data['skills'] = profile_data['skills'] or []
-                return UserProfile(**profile_data)
-            return None
-        except Exception as e:
-            logger.error(f"Error fetching user profile for user_id {user_id}: {e}")
-            return None
+if __name__ == "__main__":
+    # Set your test user_id and database DSN here
+    test_user_id = os.environ.get("TEST_USER_ID", "usr_bollywood11")
+    test_dsn = os.environ.get("TEST_DSN", "postgresql://myuser:mypassword@localhost:5432/mydb")
+    asyncio.run(test_sql(test_user_id, test_dsn))
