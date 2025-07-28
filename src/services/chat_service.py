@@ -93,7 +93,7 @@ async def run_chat(user_message: str, user_profile: UserProfile, pool: Pool):
                     "results_count": tool_data.get("total_found"),
                 }
             }
-            return {"response_type": "structured", "data": final_response}
+            return {"response_type": "structured", "message": final_response}
         
         else:
             # No ToolReturnPart was found, so it's a standard chat reply.
